@@ -58,12 +58,12 @@ body{
     color: #707070;
 }
 .search button{
-    border: 0;
-    outline: 0;
-    background: #707070;
+    border: none;
+    outline: none;
+    background: transparent;
     border-radius: 0;
-    width: 52px;
-    height: 52px;
+    width: 60px;
+    height: 60px;
     padding: 0;
     cursor: pointer;
     flex-shrink: flex;
@@ -91,13 +91,14 @@ body{
         inset -4px -4px 0px 0px #808080;
 }
 .search button img{
-    width: 22px;
-    height: 22px;
+    width: 50px;
+    height: 50px;
     image-rendering: pixelated;
 }
 .weather-icon{
-    width: 170px;
-    margin-top: 30px;
+    width: 300px;
+    image-rendering:pixelated;
+    filter: drop-shadow(0 0 20px rgba(255, 230, 100, 0.8));
 }
 .weather h1{
     font-size: 80px;
