@@ -22,10 +22,23 @@ async function checkWeather(city) {
     } else {
     const data = await response.json();
 
+    const temp = data.main.temp;
+    const card = document.querySelector(".card");
+    if (temp <= 10) {
+        card.style.backgroundImage = "linear-gradient(rgba(0, 0, 0, 0.25), rgba(0, 0, 0, 0.25)), url('images/snow-biome.png')";
+    } else if (temp >=30) {
+        card.style.backgroundImage = "linear-gradient(rgba(0, 0, 0, 0.25), rgba(0, 0, 0, 0.25)), url('images/desert-biome.png')";
+    }else {
+        card.style.backgroundImage = "linear-gradient(rgba(0, 0, 0, 0.25), rgba(0, 0, 0, 0.25)), url('images/normal-biome.png')";
+    }
+
+
     document.querySelector(".city").innerHTML = data.name;
     document.querySelector(".temp").innerHTML = Math.round(data.main.temp) + "°C";
     document.querySelector(".humidity").innerHTML = data.main.humidity + "%";
     document.querySelector(".wind").innerHTML = Math.round(data.wind.speed) + " km/h";
+    document.querySelector(".weather").style.display = "block";
+    document.querySelector(".error").style.display = "none";
 
    const utcTime = new Date().getTime() + (new Date().getTimezoneOffset() * 60000);
    const cityTime = new Date(utcTime + (data.timezone * 1000));
@@ -67,12 +80,6 @@ searchBtn.addEventListener("click", ()=>{
 searchBox.addEventListener("keydown", (event) => {
     if (event.key === "Enter") {
         playClickSound();
-        checkWeather(searchBox.value);
-    }
-});
-
-searchBtn.addEventListener("click", () => {
-    if (searchBox.value.trim() !== "") {
         checkWeather(searchBox.value);
     }
 });
