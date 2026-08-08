@@ -4,17 +4,28 @@ const searchBox = document.querySelector(".search input");
 const searchBtn = document.querySelector(".search button");
 const weatherIcon = document.querySelector(".weather-icon");
 const clickSound = new Audio("images/click.mp3.mp3")
+clickSound.preload = "auto";
+
 function playClickSound() {
     clickSound.currentTime = 0;
-    clickSound.play().catch(error => {
-        console.error("audio playback error:", error);
-    });
+    const playPromise = clickSound.play();
+
+    if (playPromise !== undefined) {
+        playPromise.catch(error => {
+            console.warn("Audio playback blocked or waiting for user interaction:", error);
+        });
+    }   
 }
 
 async function checkWeather(city) {
-    if (!city.trim()) return;
+    const trimmedCity = city.trim();
+    if (!trimmedCity || /^\d+$/.test(trimmedCity)) {
+        document.querySelector(".error").style.display = "block";
+        document.querySelector(".weather").style.display = "none";
+        return;
+    }
 
-    const response = await fetch(apiUrl + encodeURIComponent(city) + `&appid=${apiKey}`);
+    const response = await fetch(apiUrl + encodeURIComponent(trimmedCity) + `&appid=${apiKey}`);
 
     if (response.status == 404) {
         document.querySelector(".error").style.display = "block";
@@ -31,14 +42,14 @@ async function checkWeather(city) {
     }else {
         card.style.backgroundImage = "linear-gradient(rgba(0, 0, 0, 0.25), rgba(0, 0, 0, 0.25)), url('images/normal-biome.png')";
     }
+    card.style.backgroundSize = "cover";
+    card.style.backgroundPosition = "center";    
 
 
     document.querySelector(".city").innerHTML = data.name;
     document.querySelector(".temp").innerHTML = Math.round(data.main.temp) + "°C";
     document.querySelector(".humidity").innerHTML = data.main.humidity + "%";
     document.querySelector(".wind").innerHTML = Math.round(data.wind.speed) + " km/h";
-    document.querySelector(".weather").style.display = "block";
-    document.querySelector(".error").style.display = "none";
 
    const utcTime = new Date().getTime() + (new Date().getTimezoneOffset() * 60000);
    const cityTime = new Date(utcTime + (data.timezone * 1000));
@@ -64,13 +75,12 @@ async function checkWeather(city) {
         weatherIcon.classList.add("sun-glow");
     } else {
         weatherIcon.classList.remove("sun-glow");
-    }
+    } 
 
-document.querySelector(".weather").style.display = "block";
-document.querySelector(".error").style.display = "none";
+        document.querySelector(".weather").style.display = "block";
+        document.querySelector(".error").style.display = "none";
     }
 }
-
 
 searchBtn.addEventListener("click", ()=>{
     playClickSound();
